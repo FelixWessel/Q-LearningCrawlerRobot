@@ -1,3 +1,7 @@
+import time
+import Encoder
+
+
 class Environment:
     def __init__(self, numberServoArmStates, numberServoHandStates, numberOfActions):
         self.numberServoArmStates = numberServoArmStates
@@ -15,3 +19,14 @@ class Environment:
 
         #Setup of Servo Hand
         self.servoHand = Servo(15, self.numberServoHandStates, 84.0, 0.0, 140.0)
+
+    #A setup method that will put the servos into their initial angle
+    def setup(self):
+        self.servoArm.angle = self.servoArm.initialAngle
+        time.sleep(self.delayTime)
+        self.servoHand.angle = self.servoHand.initialAngle
+        time.sleep(self.delayTime)
+        print("Setup completed")
+
+    def getNumberOfActions(self):
+        return self.numberOfActions
