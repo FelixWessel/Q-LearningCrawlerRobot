@@ -39,4 +39,25 @@ class Environment:
 
     #This method will physically execute the chosen action and will get the next states for Arm and Hand
     def move(self, actionIndex, lastDistance):
-        
+        currentServoArmState, currentServoHandState = self.state
+        newServoArmState = currentServoArmState
+        newServoHandState = currentServoHandState
+        negativereward = False
+
+        #Action 0
+        if actionIndex == 0 and currentServoArmState < (self.numberServoArmStates-1):
+            newServoArmState += 1
+            self.ServoArmNextAngle = self.ServoArm.currentAngle + self.ServoArm.stepAngle
+            self.ServoArm.angle = self.ServoArmNextAngle
+            self.servoArm.currentAngle = self.self.ServoArmNextAngle
+            print("Current Angle after action zero is " + str(self.ServoArm.currentAngle))
+            time.sleep(self.delayTime)
+
+        #Action 1
+        elif actionIndex == 1 and currentServoArmState != 0:
+            newServoArmState -= 1
+            self.ServoArmNextAngle = self.ServoArm.currentAngle - self.ServoArm.stepAngle
+            self.ServoArm.angle = self.ServoArmNextAngle
+            self.servoArm.currentAngle = self.self.ServoArmNextAngle
+            print("Current Angle after action one is " + str(self.ServoArm.currentAngle))
+            time.sleep(self.delayTime)
