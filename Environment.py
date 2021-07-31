@@ -3,13 +3,13 @@ import Encoder
 
 import Servo
 
-
 class Environment:
     def __init__(self, numberServoArmStates, numberServoHandStates, numberOfActions):
         self.numberServoArmStates = numberServoArmStates
         self.numberServoHandStates = numberServoHandStates
         self.numberOfActions = numberOfActions
         
+        #This delay time allows the servos to set their position and the crawler to roll
         self.delayTime = 0.2
         
         #Parameters of Rotary Encoder
@@ -33,5 +33,10 @@ class Environment:
         time.sleep(self.delayTime)
         print("Setup completed")
 
+    #This method returns the number of actions to the agent
     def getNumberOfActions(self):
         return self.numberOfActions
+
+    #This method will physically execute the chosen action and will get the next states for Arm and Hand
+    def move(self, actionIndex, lastDistance):
+        
