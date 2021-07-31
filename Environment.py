@@ -1,6 +1,6 @@
 import time
 import Encoder
-
+import numpy as np
 import Servo
 
 class Environment:
@@ -52,6 +52,9 @@ class Environment:
             self.servoArm.currentAngle = self.self.ServoArmNextAngle
             print("Current Angle after action zero is " + str(self.ServoArm.currentAngle))
             time.sleep(self.delayTime)
+        elif actionIndex == 0 and currentServoArmState >= (self.numberServoArmStates-1):
+            print ("Action is not allowed!!!")
+            negativereward = True
 
         #Action 1
         elif actionIndex == 1 and currentServoArmState != 0:
@@ -61,3 +64,44 @@ class Environment:
             self.servoArm.currentAngle = self.self.ServoArmNextAngle
             print("Current Angle after action one is " + str(self.ServoArm.currentAngle))
             time.sleep(self.delayTime)
+        elif actionIndex == 1 and currentServoArmState == 0:
+            print ("Action is not allowed!!!")
+            negativereward = True
+        
+        #Action 2
+        elif actionIndex == 2 and currentServoHandState < (self.numberServoHandStates-1):
+            newServoHandState += 1
+            self.ServoHandNextAngle = self.ServoHand.currentAngle + self.ServoHand.stepAngle
+            self.ServoHand.angle = self.ServoHandNextAngle
+            self.servoHand.currentAngle = self.self.ServoHandNextAngle
+            print("Current Angle after action zero is " + str(self.ServoHand.currentAngle))
+            time.sleep(self.delayTime)
+        elif actionIndex == 2 and currentServoHandState >= (self.numberServoHandStates-1):
+            print ("Action is not allowed!!!")
+            negativereward = True
+
+        #Action 3
+        elif actionIndex == 3 and currentServoHandState != 0:
+            newServoHandState -= 1
+            self.ServoHandNextAngle = self.ServoHand.currentAngle - self.ServoHand.stepAngle
+            self.ServoHand.angle = self.ServoHandNextAngle
+            self.servoHand.currentAngle = self.self.ServoHandNextAngle
+            print("Current Angle after action one is " + str(self.ServoHand.currentAngle))
+            time.sleep(self.delayTime)
+        elif actionIndex == 3 and currentServoHandState == 0:
+            print ("Action is not allowed!!!")
+            negativereward = True
+
+        currentDistance = self.wheel.read()
+        if negativereward != True:
+            deltaDistance = currentDistance - lastDistance
+            reward = deltaDistance*20
+        else:
+            deltaDistance = 0
+            reward = deltaDistance
+
+        lastDistance = currentDistance
+
+        self.state = (newServoArmState, newServoHandState)
+        return np.array(self.state), lastDistance, reward
+
