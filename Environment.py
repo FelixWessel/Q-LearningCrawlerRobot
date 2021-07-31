@@ -74,7 +74,7 @@ class Environment:
             self.ServoHandNextAngle = self.ServoHand.currentAngle + self.ServoHand.stepAngle
             self.ServoHand.angle = self.ServoHandNextAngle
             self.servoHand.currentAngle = self.self.ServoHandNextAngle
-            print("Current Angle after action zero is " + str(self.ServoHand.currentAngle))
+            print("Current Angle after action two is " + str(self.ServoHand.currentAngle))
             time.sleep(self.delayTime)
         elif actionIndex == 2 and currentServoHandState >= (self.numberServoHandStates-1):
             print ("Action is not allowed!!!")
@@ -86,7 +86,7 @@ class Environment:
             self.ServoHandNextAngle = self.ServoHand.currentAngle - self.ServoHand.stepAngle
             self.ServoHand.angle = self.ServoHandNextAngle
             self.servoHand.currentAngle = self.self.ServoHandNextAngle
-            print("Current Angle after action one is " + str(self.ServoHand.currentAngle))
+            print("Current Angle after action three is " + str(self.ServoHand.currentAngle))
             time.sleep(self.delayTime)
         elif actionIndex == 3 and currentServoHandState == 0:
             print ("Action is not allowed!!!")
