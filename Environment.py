@@ -1,6 +1,8 @@
 import time
 import Encoder
 
+import Servo
+
 
 class Environment:
     def __init__(self, numberServoArmStates, numberServoHandStates, numberOfActions):
@@ -14,6 +16,9 @@ class Environment:
         self.wheel = Encoder.Encoder(17, 18)
         self.lastDistance = 0
 
+        #Define the initial state of the environment
+        self.state = (self.ServoArm.initialServoState, self.ServoHand.initialServoState)
+        
         #Setup of Servo Arm
         self.servoArm = Servo(0, self.numberServoArmStates, 127.0, 120.0, 160.0)
 
