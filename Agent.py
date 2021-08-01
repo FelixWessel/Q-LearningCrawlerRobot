@@ -1,4 +1,7 @@
 import Environment
+import numpy as np
+import time
+import math
 
 Crawler = Environment(4, 4, 4)
 
@@ -15,7 +18,7 @@ totalReward = 0
 #And there are 36 rows for 6x6 states (each of the two arms can have 6 states)
 #numStates = numTheta1States*numTheta2States
 numActions = Crawler.getNumberOfActions()
-qValues = np.full((Crawler.numberServoArmStates, numberServoHandStates, numActions), 10, dtype=np.int32)
+qValues = np.full((Crawler.numberServoArmStates, Crawler.numberServoHandStates, numActions), 10, dtype=np.int32)
 print("Q-Table at starting point")
 print(qValues)
 
@@ -34,7 +37,39 @@ def getNextAction(state, epsilon):
     #then choose the most promising value from the Q-table for this state.
     if np.random.random() > epsilon:
         print("Action from Q-table")
-        return np.argmax(q_values[int(state[0]), int(state[1])])
+        return np.argmax(qValues[int(state[0]), int(state[1])])
     else: #choose a random action
         print("Random Action")
         return np.random.randint(4)
+
+for t in range (0, EPISODES):
+    print ("Loop No. " + str(t))
+    epsilon = getEpsilon(t, EPISODES)
+    print ("Epsilon " + str(epsilon))
+    actionIndex = getNextAction(Crawler.state, epsilon)
+    print ("The next action is action No. " + str(actionIndex))
+
+    oldServoArmState, oldServoHandState = Crawler.state #store the old row and column indexes
+
+    Crawler.state, Crawler.lastDistance, reward = Crawler.move(actionIndex, Crawler.lastDistance)
+    print ("The current reward is "+str((reward)))
+    time.sleep(0.2)
+
+    #Receive the reward for moving to the new state, and calculate the temporal difference
+    oldQValue = qValues[oldServoArmState, oldServoHandState, actionIndex]
+    temporalDifference = reward + (discountFactor * np.max(qValues[int(Crawler.state[0]), int(Crawler.state[1])])) - oldQValue 
+
+    #Update the Q-value for the previous state and action pair
+    newQValue = oldQValue + (learningRate * temporalDifference)
+    qValues[oldServoArmState, oldServoHandState, actionIndex] = newQValue
+
+    totalReward = totalReward + reward 
+
+    t = t+1
+
+    if t==EPISODES:
+        training = False
+        print("Training completed")
+        print(qValues)
+        print(totalReward)
+        #np.save(f"messwerte/messwerte.npy", messwerte)  

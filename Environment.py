@@ -20,10 +20,10 @@ class Environment:
         self.state = (self.ServoArm.initialServoState, self.ServoHand.initialServoState)
         
         #Setup of Servo Arm
-        self.servoArm = Servo(0, self.numberServoArmStates, 127.0, 120.0, 160.0)
+        self.servoArm = Servo(self.numberServoArmStates, 127.0, 120.0, 160.0, 0)
 
         #Setup of Servo Hand
-        self.servoHand = Servo(15, self.numberServoHandStates, 84.0, 0.0, 140.0)
+        self.servoHand = Servo(self.numberServoHandStates, 84.0, 0.0, 140.0, 15)
 
     #A setup method that will put the servos into their initial angle
     def setup(self):
