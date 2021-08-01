@@ -3,7 +3,7 @@ import numpy as np
 import time
 import math
 
-Crawler = Environment(4, 4, 4)
+Crawler = Environment(6, 6, 4)
 
 Crawler.setup()
 
