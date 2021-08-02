@@ -1,12 +1,17 @@
 import time
 import Encoder
 import numpy as np
-import Servo
+#from Servo import Servo
+
+from adafruit_servokit import ServoKit
+
+#kit = ServoKit(channels=16)
+
 
 class Environment:
-    def __init__(self, numberServoArmStates, numberServoHandStates, numberOfActions):
-        self.numberServoArmStates = numberServoArmStates
-        self.numberServoHandStates = numberServoHandStates
+    def __init__(self, servoArmNumberOfStates, servoHandNumberOfStates, numberOfActions):
+        #self.numberServoArmStates = numberServoArmStates
+        #self.numberServoHandStates = numberServoHandStates
         self.numberOfActions = numberOfActions
         
         #This delay time allows the servos to set their position and the crawler to roll
@@ -15,21 +20,51 @@ class Environment:
         #Parameters of Rotary Encoder
         self.wheel = Encoder.Encoder(17, 18)
         self.lastDistance = 0
-
-        #Define the initial state of the environment
-        self.state = (self.ServoArm.initialServoState, self.ServoHand.initialServoState)
-        
+      
+        kit = ServoKit(channels=16)
+      
         #Setup of Servo Arm
-        self.servoArm = Servo(self.numberServoArmStates, 127.0, 120.0, 160.0, 0)
+        #self.servoArm = Servo(self.numberServoHandStates, 4, 127.0, 120.0, 160.0, 0)
+
+        self.servoArm = kit.servo[0]
+        self.servoArmNumberOfStates = servoArmNumberOfStates
+        self.servoArmInitialAngle = 127.0
+        self.servoArmCurrentAngle = self.servoArmInitialAngle
+        self.servoArmMinAngle = 120.0
+        self.servoArmMaxAngle = 160.0
+        self.servoArmStepAngle = int((self.servoArmMaxAngle-self.servoArmMinAngle)/(self.servoArmNumberOfStates-1))
+        self.servoArmInitialState=int(((self.servoArmInitialAngle-self.servoArmMinAngle)/self.servoArmStepAngle)) #This is an integer between zero and numOfStates-1 used to index the state number of servo
+
+        self.servoHand = kit.servo[15]
+        self.servoHandNumberOfStates = servoHandNumberOfStates
+        self.servoHandInitialAngle = 84.0
+        self.servoHandCurrentAngle = self.servoHandInitialAngle
+        self.servoHandMinAngle = 0.0
+        self.servoHandMaxAngle = 140.0
+        self.servoHandStepAngle = int((self.servoHandMaxAngle-self.servoHandMinAngle)/(self.servoHandNumberOfStates-1))
+        self.servoHandInitialState=int(((self.servoHandInitialAngle-self.servoHandMinAngle)/self.servoHandStepAngle))
+
+#         self.numberOfStates = numberOfStates
+#         self.initialAngle = initialAngle
+#         self.currentAngle = self.initialAngle
+#         self.minAngle = minAngle
+#         self.maxAngle = maxAngle
+#         self.stepAngle = int((self.maxAngle-self.minAngle)/(self.numberOfStates-1))
+#         self.initialServoState=int(((self.initialAngle-self.minAngle)/self.stepAngle)) #This is an integer between zero and numOfStates-1 used to index the state number of servo
+# 
+
 
         #Setup of Servo Hand
-        self.servoHand = Servo(self.numberServoHandStates, 84.0, 0.0, 140.0, 15)
+        #self.servoHand = Servo(self.numberServoHandStates, 84.0, 0.0, 140.0, 15)
+        
+        #Define the initial state of the environment
+        self.state = (self.servoArmInitialState, self.servoHandInitialState)
 
     #A setup method that will put the servos into their initial angle
     def setup(self):
-        self.servoArm.angle = self.servoArm.initialAngle
+        self.servoArm.angle = self.servoArmInitialAngle
         time.sleep(self.delayTime)
-        self.servoHand.angle = self.servoHand.initialAngle
+        self.servoHand.angle = self.servoHandInitialAngle
         time.sleep(self.delayTime)
         print("Setup completed")
 
@@ -39,61 +74,61 @@ class Environment:
 
     #This method will physically execute the chosen action and will get the next states for Arm and Hand
     def move(self, actionIndex, lastDistance):
-        currentServoArmState, currentServoHandState = self.state
-        newServoArmState = currentServoArmState
-        newServoHandState = currentServoHandState
-        negativereward = False
+        servoArmCurrentState, servoHandCurrentState = self.state
+        servoArmNewState = servoArmCurrentState
+        servoHandNewState = servoHandCurrentState
+        negativeReward = False
 
         #Action 0
-        if actionIndex == 0 and currentServoArmState < (self.numberServoArmStates-1):
-            newServoArmState += 1
-            self.ServoArmNextAngle = self.ServoArm.currentAngle + self.ServoArm.stepAngle
-            self.ServoArm.angle = self.ServoArmNextAngle
-            self.servoArm.currentAngle = self.self.ServoArmNextAngle
-            print("Current Angle after action zero is " + str(self.ServoArm.currentAngle))
+        if actionIndex == 0 and servoArmCurrentState < (self.servoArmNumberOfStates-1):
+            servoArmNewState += 1
+            self.servoArmNextAngle = self.servoArmCurrentAngle + self.servoArmStepAngle
+            self.servoArm.angle = self.servoArmNextAngle
+            self.servoArmCurrentAngle = self.servoArmNextAngle
+            print("Current Angle after action zero is " + str(self.servoArmCurrentAngle))
             time.sleep(self.delayTime)
-        elif actionIndex == 0 and currentServoArmState >= (self.numberServoArmStates-1):
+        elif actionIndex == 0 and servoArmCurrentState >= (self.servoArmNumberOfStates-1):
             print ("Action is not allowed!!!")
-            negativereward = True
+            negativeReward = True
 
         #Action 1
-        elif actionIndex == 1 and currentServoArmState != 0:
-            newServoArmState -= 1
-            self.ServoArmNextAngle = self.ServoArm.currentAngle - self.ServoArm.stepAngle
-            self.ServoArm.angle = self.ServoArmNextAngle
-            self.servoArm.currentAngle = self.self.ServoArmNextAngle
-            print("Current Angle after action one is " + str(self.ServoArm.currentAngle))
+        elif actionIndex == 1 and servoArmCurrentState != 0:
+            servoArmNewState -= 1
+            self.servoArmNextAngle = self.servoArmCurrentAngle - self.servoArmStepAngle
+            self.servoArm.angle = self.servoArmNextAngle
+            self.servoArmCurrentAngle = self.servoArmNextAngle
+            print("Current Angle after action one is " + str(self.servoArmCurrentAngle))
             time.sleep(self.delayTime)
-        elif actionIndex == 1 and currentServoArmState == 0:
+        elif actionIndex == 1 and servoArmCurrentState == 0:
             print ("Action is not allowed!!!")
-            negativereward = True
+            negativeReward = True
         
         #Action 2
-        elif actionIndex == 2 and currentServoHandState < (self.numberServoHandStates-1):
-            newServoHandState += 1
-            self.ServoHandNextAngle = self.ServoHand.currentAngle + self.ServoHand.stepAngle
-            self.ServoHand.angle = self.ServoHandNextAngle
-            self.servoHand.currentAngle = self.self.ServoHandNextAngle
-            print("Current Angle after action two is " + str(self.ServoHand.currentAngle))
+        elif actionIndex == 2 and servoHandCurrentState < (self.servoHandNumberOfStates-1):
+            servoHandNewState += 1
+            self.servoHandNextAngle = self.servoHandCurrentAngle + self.servoHandStepAngle
+            self.servoHand.angle = self.servoHandNextAngle
+            self.servoHandCurrentAngle = self.servoHandNextAngle
+            print("Current Angle after action two is " + str(self.servoHandCurrentAngle))
             time.sleep(self.delayTime)
-        elif actionIndex == 2 and currentServoHandState >= (self.numberServoHandStates-1):
+        elif actionIndex == 2 and servoHandCurrentState >= (self.servoHandNumberOfStates-1):
             print ("Action is not allowed!!!")
-            negativereward = True
+            negativeReward = True
 
         #Action 3
-        elif actionIndex == 3 and currentServoHandState != 0:
-            newServoHandState -= 1
-            self.ServoHandNextAngle = self.ServoHand.currentAngle - self.ServoHand.stepAngle
-            self.ServoHand.angle = self.ServoHandNextAngle
-            self.servoHand.currentAngle = self.self.ServoHandNextAngle
-            print("Current Angle after action three is " + str(self.ServoHand.currentAngle))
+        elif actionIndex == 3 and servoHandCurrentState != 0:
+            servoHandNewState -= 1
+            self.servoHandNextAngle = self.servoHandCurrentAngle - self.servoHandStepAngle
+            self.servoHand.angle = self.servoHandNextAngle
+            self.servoHandCurrentAngle = self.servoHandNextAngle
+            print("Current Angle after action three is " + str(self.servoHandCurrentAngle))
             time.sleep(self.delayTime)
-        elif actionIndex == 3 and currentServoHandState == 0:
+        elif actionIndex == 3 and servoHandCurrentState == 0:
             print ("Action is not allowed!!!")
-            negativereward = True
+            negativeReward = True
 
         currentDistance = self.wheel.read()
-        if negativereward != True:
+        if negativeReward != True:
             deltaDistance = currentDistance - lastDistance
             reward = deltaDistance*20
         else:
@@ -102,6 +137,6 @@ class Environment:
 
         lastDistance = currentDistance
 
-        self.state = (newServoArmState, newServoHandState)
+        self.state = (servoArmNewState, servoHandNewState)
         return np.array(self.state), lastDistance, reward
 

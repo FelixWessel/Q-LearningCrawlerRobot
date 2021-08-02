@@ -4,7 +4,7 @@ from adafruit_servokit import ServoKit
 
 
 class Servo(ServoKit):
-    def __init__(self, numberOfStates, initialAngle, minAngle, maxAngle, channels, i2c=None, address=0x40, reference_clock_speed=25000000, frequency=50):
+    def __init__(self, numberOfStates, initialAngle, minAngle, maxAngle, channels):
         # hier muss noch der Anschluss aus der SuperKlasse rein
         ServoKit.__init__(self, channels, i2c=None, address=0x40, reference_clock_speed=25000000, frequency=50)
         self.numberOfStates = numberOfStates
