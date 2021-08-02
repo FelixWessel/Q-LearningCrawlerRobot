@@ -1,17 +1,10 @@
 import time
 import Encoder
 import numpy as np
-#from Servo import Servo
-
 from adafruit_servokit import ServoKit
-
-#kit = ServoKit(channels=16)
-
 
 class Environment:
     def __init__(self, servoArmNumberOfStates, servoHandNumberOfStates, numberOfActions):
-        #self.numberServoArmStates = numberServoArmStates
-        #self.numberServoHandStates = numberServoHandStates
         self.numberOfActions = numberOfActions
         
         #This delay time allows the servos to set their position and the crawler to roll
@@ -21,11 +14,10 @@ class Environment:
         self.wheel = Encoder.Encoder(17, 18)
         self.lastDistance = 0
       
+        #Initialize Adafruit Servo Kit  
         kit = ServoKit(channels=16)
-      
-        #Setup of Servo Arm
-        #self.servoArm = Servo(self.numberServoHandStates, 4, 127.0, 120.0, 160.0, 0)
 
+        #Set Parameters for ServoArm
         self.servoArm = kit.servo[0]
         self.servoArmNumberOfStates = servoArmNumberOfStates
         self.servoArmInitialAngle = 127.0
@@ -35,6 +27,7 @@ class Environment:
         self.servoArmStepAngle = int((self.servoArmMaxAngle-self.servoArmMinAngle)/(self.servoArmNumberOfStates-1))
         self.servoArmInitialState=int(((self.servoArmInitialAngle-self.servoArmMinAngle)/self.servoArmStepAngle)) #This is an integer between zero and numOfStates-1 used to index the state number of servo
 
+        #Set Parameters for ServoHand
         self.servoHand = kit.servo[15]
         self.servoHandNumberOfStates = servoHandNumberOfStates
         self.servoHandInitialAngle = 84.0
@@ -43,19 +36,6 @@ class Environment:
         self.servoHandMaxAngle = 140.0
         self.servoHandStepAngle = int((self.servoHandMaxAngle-self.servoHandMinAngle)/(self.servoHandNumberOfStates-1))
         self.servoHandInitialState=int(((self.servoHandInitialAngle-self.servoHandMinAngle)/self.servoHandStepAngle))
-
-#         self.numberOfStates = numberOfStates
-#         self.initialAngle = initialAngle
-#         self.currentAngle = self.initialAngle
-#         self.minAngle = minAngle
-#         self.maxAngle = maxAngle
-#         self.stepAngle = int((self.maxAngle-self.minAngle)/(self.numberOfStates-1))
-#         self.initialServoState=int(((self.initialAngle-self.minAngle)/self.stepAngle)) #This is an integer between zero and numOfStates-1 used to index the state number of servo
-# 
-
-
-        #Setup of Servo Hand
-        #self.servoHand = Servo(self.numberServoHandStates, 84.0, 0.0, 140.0, 15)
         
         #Define the initial state of the environment
         self.state = (self.servoArmInitialState, self.servoHandInitialState)
