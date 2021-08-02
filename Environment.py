@@ -2,6 +2,7 @@ import time
 import Encoder
 import numpy as np
 from adafruit_servokit import ServoKit
+from Sensor import Sensor
 
 class Environment:
     def __init__(self, servoArmNumberOfStates, servoHandNumberOfStates, numberOfActions):
@@ -11,7 +12,8 @@ class Environment:
         self.delayTime = 0.2
         
         #Parameters of Rotary Encoder
-        self.wheel = Encoder.Encoder(17, 18)
+        #self.wheel = Encoder.Encoder(17, 18)
+        self.sensor = Sensor()
         self.lastDistance = 0
       
         #Initialize Adafruit Servo Kit  
@@ -107,7 +109,7 @@ class Environment:
             print ("Action is not allowed!!!")
             negativeReward = True
 
-        currentDistance = self.wheel.read()
+        currentDistance = self.sensor.read()
         if negativeReward != True:
             deltaDistance = currentDistance - lastDistance
             reward = deltaDistance*20
