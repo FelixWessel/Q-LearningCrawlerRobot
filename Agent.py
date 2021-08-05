@@ -10,7 +10,7 @@ Crawler.setup()
 #Setting the parameters for Q-Learning
 discountFactor = 0.9 #discount factor for future rewards
 learningRate = 0.9 #the rate at which the AI agent should learn
-EPISODES = 500
+EPISODES = 20
 totalReward = 0
 
 #Initializing the Q table with all ones
@@ -53,6 +53,7 @@ for t in range (0, EPISODES):
 
     Crawler.state, Crawler.lastDistance, reward = Crawler.move(actionIndex, Crawler.lastDistance)
     print ("The current reward is "+str((reward)))
+    servoArmNewState, servoHandNewState = Crawler.state
     time.sleep(0.2)
 
     #Receive the reward for moving to the new state, and calculate the temporal difference
@@ -65,31 +66,33 @@ for t in range (0, EPISODES):
 
     totalReward = totalReward + reward 
 
-    Observations = 27
+    
+
+    Observations = 19
     listOfObservations = np.zeros((EPISODES, Observations))
     listOfObservations[t,:] = [
         t, 
         actionIndex, 
         reward, 
         totalReward,
-        Crawler.negativeReward,
+        #Crawler.negativeReward,
         epsilon, 
-        Crawler.lastDistance,
-        Crawler.currentDistance,
-        Crawler.deltaDistance,
+        #(getattr(Crawler.lastDistance)),
+        #(getattr(Crawler.currentDistance)),
+        #(getattr(Crawler.deltaDistance)),
         oldQValue,
         temporalDifference,
         newQValue,
         servoArmOldState,
-        Crawler.servoArmCurrentState,
+        #(getattr(Crawler.servoArmCurrentState)),
         Crawler.servoArmCurrentAngle,
-        Crawler.servoArmNewState,
-        Crawler.servoArmNextAngle,
+        servoArmNewState,
+        #(getattr(Crawler.servoArmNextAngle)),
         servoHandOldState,
-        Crawler.servoHandCurrentState,
+        #(getattr(Crawler.servoHandCurrentState)),
         Crawler.servoHandCurrentAngle,
-        Crawler.servoHandNewState,
-        Crawler.servoHandNextAngle,
+        servoHandNewState,
+        #(getattr(Crawler.servoHandNextAngle)),
         Crawler.servoArmNumberOfStates,
         Crawler.servoHandNumberOfStates,
         numActions,
