@@ -18,7 +18,7 @@ totalReward = 0
 #And there are 36 rows for 6x6 states (each of the two arms can have 6 states)
 #numStates = numTheta1States*numTheta2States
 numActions = Crawler.getNumberOfActions()
-qValues = np.full((Crawler.servoArmNumberOfStates, Crawler.servoHandNumberOf States, numActions), 10, dtype=np.int32)
+qValues = np.full((Crawler.servoArmNumberOfStates, Crawler.servoHandNumberOfStates, numActions), 10, dtype=np.int32)
 print("Q-Table at starting point")
 print(qValues)
 
