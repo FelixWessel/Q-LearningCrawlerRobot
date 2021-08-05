@@ -18,7 +18,7 @@ totalReward = 0
 #And there are 36 rows for 6x6 states (each of the two arms can have 6 states)
 #numStates = numTheta1States*numTheta2States
 numActions = Crawler.getNumberOfActions()
-qValues = np.full((Crawler.servoArmNumberOfStates, Crawler.servoHandNumberOfStates, numActions), 10, dtype=np.int32)
+qValues = np.full((Crawler.servoArmNumberOfStates, Crawler.servoHandNumberOfStates, numActions), 1, dtype=np.int32)
 print("Q-Table at starting point")
 print(qValues)
 
@@ -49,21 +49,53 @@ for t in range (0, EPISODES):
     actionIndex = getNextAction(Crawler.state, epsilon)
     print ("The next action is action No. " + str(actionIndex))
 
-    oldServoArmState, oldServoHandState = Crawler.state #store the old row and column indexes
+    servoArmOldState, servoHandOldState = Crawler.state #store the old row and column indexes
 
     Crawler.state, Crawler.lastDistance, reward = Crawler.move(actionIndex, Crawler.lastDistance)
     print ("The current reward is "+str((reward)))
     time.sleep(0.2)
 
     #Receive the reward for moving to the new state, and calculate the temporal difference
-    oldQValue = qValues[oldServoArmState, oldServoHandState, actionIndex]
+    oldQValue = qValues[servoArmOldState, servoHandOldState, actionIndex]
     temporalDifference = reward + (discountFactor * np.max(qValues[int(Crawler.state[0]), int(Crawler.state[1])])) - oldQValue 
 
     #Update the Q-value for the previous state and action pair
     newQValue = oldQValue + (learningRate * temporalDifference)
-    qValues[oldServoArmState, oldServoHandState, actionIndex] = newQValue
+    qValues[servoArmOldState, servoHandOldState, actionIndex] = newQValue
 
     totalReward = totalReward + reward 
+
+    Observations = 27
+    listOfObservations = np.zeros((EPISODES, Observations))
+    listOfObservations[t,:] = [
+        t, 
+        actionIndex, 
+        reward, 
+        totalReward,
+        Crawler.negativeReward,
+        epsilon, 
+        Crawler.lastDistance,
+        Crawler.currentDistance,
+        Crawler.deltaDistance,
+        oldQValue,
+        temporalDifference,
+        newQValue,
+        servoArmOldState,
+        Crawler.servoArmCurrentState,
+        Crawler.servoArmCurrentAngle,
+        Crawler.servoArmNewState,
+        Crawler.servoArmNextAngle,
+        servoHandOldState,
+        Crawler.servoHandCurrentState,
+        Crawler.servoHandCurrentAngle,
+        Crawler.servoHandNewState,
+        Crawler.servoHandNextAngle,
+        Crawler.servoArmNumberOfStates,
+        Crawler.servoHandNumberOfStates,
+        numActions,
+        discountFactor,
+        learningRate,
+        ]
 
     t = t+1
 
@@ -72,4 +104,4 @@ for t in range (0, EPISODES):
         print("Training completed")
         print(qValues)
         print(totalReward)
-        #np.save(f"messwerte/messwerte.npy", messwerte)  
+        np.save(f"observations/observations.npy", listOfObservations)  
