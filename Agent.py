@@ -42,6 +42,9 @@ def getNextAction(state, epsilon):
         print("Random Action")
         return np.random.randint(4)
 
+Observations = 21
+listOfObservations = np.zeros((EPISODES, Observations))
+
 for t in range (0, EPISODES):
     print ("Loop No. " + str(t))
     epsilon = getEpsilon(t, EPISODES)
@@ -68,9 +71,6 @@ for t in range (0, EPISODES):
 
     deltaDistance = reward / 20
     
-
-    Observations = 21
-    listOfObservations = np.zeros((EPISODES, Observations))
     listOfObservations[t,:] = [
         t, 
         actionIndex, 
