@@ -10,7 +10,7 @@ Crawler.setup()
 #Setting the parameters for Q-Learning
 discountFactor = 0.9 #discount factor for future rewards
 learningRate = 0.9 #the rate at which the AI agent should learn
-EPISODES = 20
+EPISODES = 500
 totalReward = 0
 
 #Initializing the Q table with all ones

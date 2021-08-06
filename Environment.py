@@ -12,7 +12,8 @@ class Environment:
         self.delayTime = 0.2
         
         #Parameters of Rotary Encoder
-        #self.wheel = Encoder.Encoder(17, 18)
+        self.wheel = Encoder.Encoder(17, 18)
+        #Paramters of Ultrasonic Sensor
         self.sensor = Sensor()
         self.lastDistance = 0
       
@@ -109,10 +110,11 @@ class Environment:
             print ("Action is not allowed!!!")
             negativeReward = True
 
-        currentDistance = self.sensor.read()
+        #currentDistance = self.sensor.read()
+        currentDistance = self.wheel.read()
         if negativeReward != True:
             deltaDistance = currentDistance - lastDistance
-            reward = deltaDistance*20
+            reward = (deltaDistance*20)*(-1)
         else:
             deltaDistance = 0
             reward = deltaDistance
