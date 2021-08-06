@@ -66,9 +66,10 @@ for t in range (0, EPISODES):
 
     totalReward = totalReward + reward 
 
+    deltaDistance = reward / 20
     
 
-    Observations = 19
+    Observations = 21
     listOfObservations = np.zeros((EPISODES, Observations))
     listOfObservations[t,:] = [
         t, 
@@ -77,19 +78,17 @@ for t in range (0, EPISODES):
         totalReward,
         #Crawler.negativeReward,
         epsilon, 
-        #(getattr(Crawler.lastDistance)),
+        Crawler.lastDistance,
+        deltaDistance,
         #(getattr(Crawler.currentDistance)),
-        #(getattr(Crawler.deltaDistance)),
         oldQValue,
         temporalDifference,
         newQValue,
         servoArmOldState,
-        #(getattr(Crawler.servoArmCurrentState)),
         Crawler.servoArmCurrentAngle,
         servoArmNewState,
         #(getattr(Crawler.servoArmNextAngle)),
         servoHandOldState,
-        #(getattr(Crawler.servoHandCurrentState)),
         Crawler.servoHandCurrentAngle,
         servoHandNewState,
         #(getattr(Crawler.servoHandNextAngle)),
