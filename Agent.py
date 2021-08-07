@@ -102,4 +102,5 @@ for t in range (0, EPISODES):
         print("Training completed")
         print(qValues)
         print(totalReward)
-        np.save(f"observations/observations.npy", listOfObservations)  
+        np.save(f"observations/observations.npy", listOfObservations)
+        Crawler.setup()
