@@ -67,6 +67,8 @@ for t in range (0, EPISODES):
     newQValue = oldQValue + (learningRate * temporalDifference)
     qValues[servoArmOldState, servoHandOldState, actionIndex] = newQValue
 
+    np.save(f"qtables/{t}-qtable.npy", qValues)
+
     totalReward = totalReward + reward 
 
     deltaDistance = reward / 20
@@ -98,7 +100,6 @@ for t in range (0, EPISODES):
     t = t+1
 
     if t==EPISODES:
-        training = False
         print("Training completed")
         print(qValues)
         print(totalReward)
